@@ -3,6 +3,11 @@
 #include "Lublin.h"
 #include "LublinGameMode.h"
 
+void ALublinGameMode::StartPlay()
+{
+	Super::StartPlay();
+
+}
 
 
 

@@ -12,7 +12,8 @@ UCLASS()
 class LUBLIN_API ALublinGameMode : public AGameMode
 {
 	GENERATED_BODY()
-	
+
+		virtual void StartPlay() override;
 	
 	
 	
