@@ -16,5 +16,5 @@ class LUBLIN_API ALublinGameMode : public AGameMode
 		virtual void StartPlay() override;
 	
 	
-	
+
 };
