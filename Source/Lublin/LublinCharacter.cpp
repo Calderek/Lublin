@@ -39,8 +39,7 @@ void ALublinCharacter::Tick(float DeltaTime)
 
 
 
-
-
+	this->LineTrace();
 	{
 		if (bZoomingIn)
 		{
@@ -147,4 +146,24 @@ void ALublinCharacter::StopJump()
 {
 	JumpButtonDown = false;
 
+}
+void ALublinCharacter::LineTrace()
+{
+	// Zawiera dane o hitach z traceingu
+	FHitResult hit;
+	// Punkt poczatkowy ray traceingu
+	FVector startVector = this->OurCamera->GetComponentLocation();
+	// Koniec tracingu
+	FVector endVector = startVector + (this->OurCamera->GetForwardVector() * 300.0f);
+	GetWorld()->LineTraceSingleByChannel(hit, startVector, endVector, ECC_Camera);
+	// Struct przechowujacy obiekty ktorych traceowaniem jestem zainteresowany
+
+	if (hit.bBlockingHit)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("HIT"));
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("NOT HIT"));
+	}
 }

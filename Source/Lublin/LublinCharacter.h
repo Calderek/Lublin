@@ -9,10 +9,27 @@ UCLASS()
 class LUBLIN_API ALublinCharacter : public ACharacter
 {
 	GENERATED_BODY()
+protected:
+	// Zmienna przechowujaca aktualnie trace'owany obiekt
+	UPROPERTY(Category ="Line Traceing", BlueprintReadOnly, VisibleAnywhere)
+	AActor * aInteractedObject;
+	/* Line tracujaca funkcja
+	do dodania
+	@param ltObjectsToIngore -> lista objektow do zignorowania, w naszym wypadku jest to lista inicjalizowana w konstruktorze
+	*/
+	UFUNCTION(BlueprintCallable, Category = "Line Traceing")
+		void LineTrace();
 
+private:
+	/*
+	UPROPERTY(Category = "Line Traceing", BlueprintReadOnly, VisibleAnywhere)
+		FCollisionObjectQueryParams *ObjectsToIgnore;*/
 public:
 	// Sets default values for this character's properties
 	ALublinCharacter();
+
+	// Zwraca objekt z ktorym gracz jest w trakcie interakcji
+	FORCEINLINE AActor* GetInteractedObject() { return this->aInteractedObject; }
 
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
