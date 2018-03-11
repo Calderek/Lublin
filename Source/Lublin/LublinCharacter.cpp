@@ -36,6 +36,11 @@ void ALublinCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+
+
+
+
+
 	{
 		if (bZoomingIn)
 		{
@@ -54,7 +59,9 @@ void ALublinCharacter::Tick(float DeltaTime)
 	//Rotate our camera's pitch, but limit it so we're always looking downward
 	{
 		FRotator NewRotation = OurCameraSpringArm->GetComponentRotation();
-		NewRotation.Pitch = FMath::Clamp(NewRotation.Pitch + CameraInput.Y, -20.0f, 180.0f);
+		/* Oryginalnie Clamp z zakresu -20.f do 180.0f zmieniony by ulatwic interakcje z obiektami
+		*/
+		NewRotation.Pitch = FMath::Clamp(NewRotation.Pitch + CameraInput.Y,- 70.0f, 40.0f);
 		OurCameraSpringArm->SetWorldRotation(NewRotation);
 	}
 }
