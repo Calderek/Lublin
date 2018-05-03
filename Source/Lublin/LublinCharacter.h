@@ -5,31 +5,50 @@
 #include "GameFramework/Character.h"
 #include "LublinCharacter.generated.h"
 
+class UInteractableComponent;
 UCLASS()
 class LUBLIN_API ALublinCharacter : public ACharacter
 {
 	GENERATED_BODY()
 protected:
 	// Zmienna przechowujaca aktualnie trace'owany obiekt
-	UPROPERTY(Category ="Line Traceing", BlueprintReadOnly, VisibleAnywhere)
-	AActor * aInteractedObject;
+	//UPROPERTY(Category ="Line Traceing", BlueprintReadOnly, VisibleAnywhere)
+	//AActor * aInteractedObject;
 	/* Line tracujaca funkcja
 	do dodania
 	@param ltObjectsToIngore -> lista objektow do zignorowania, w naszym wypadku jest to lista inicjalizowana w konstruktorze
 	*/
-	UFUNCTION(BlueprintCallable, Category = "Line Traceing")
-		void LineTrace();
+	// Zakomentowane bo moze sie pozniej przydac, zadecydowac przy systemie podnoszenia itemow
+	//UFUNCTION(BlueprintCallable, Category = "Line Traceing")
+		//void LineTrace();
 
 private:
+
+	// Komponent odpowiedzialny za podnoszenie i upuszczanie pzedmiotow
+	UPROPERTY(EditAnywhere)
+	UInteractableComponent*  InteractablePhysicsComponent = nullptr;
+
 	/*
-	UPROPERTY(Category = "Line Traceing", BlueprintReadOnly, VisibleAnywhere)
-		FCollisionObjectQueryParams *ObjectsToIgnore;*/
+	Takes nothing
+	returns nothing
+	called to initiate pickup sequence, is here mostly for pointer protection
+	*/
+	UFUNCTION(BlueprintCallable, Category = "Picking up")
+		void pickUp();
+
+	/*
+	Takes nothing
+	returns nothig
+	called to release item from player hold. implemented for pointer protection as whole process is happening in component
+	*/
+	UFUNCTION(BlueprintCallable, Category = "Picking up")
+		void releaseItem();
+
 public:
 	// Sets default values for this character's properties
 	ALublinCharacter();
 
-	// Zwraca objekt z ktorym gracz jest w trakcie interakcji
-	FORCEINLINE AActor* GetInteractedObject() { return this->aInteractedObject; }
+
 
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -52,9 +71,9 @@ public:
 	UFUNCTION()
 		void StartJump();
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere,BlueprintReadWrite)
 		bool JumpButtonDown;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere,BlueprintReadWrite)
 		bool CrouchButtonDown;
 
 	UFUNCTION()
@@ -79,6 +98,8 @@ public:
 	void YawCamera(float AxisValue);
 	void ZoomIn();
 	void ZoomOut();
+
+
 
 	//Camera
 	UPROPERTY(VisibleAnywhere)

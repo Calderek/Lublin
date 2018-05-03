@@ -9,7 +9,7 @@
 void UDzienNocCheckbock::ToggleDayNight(AActor *LightToChange, bool bCheckboxStatus)
 {
 	/*przerzutuj dwa swiatla zeby sprawdzic ich typy
-	niestety jedyne co te dwa swiatelka maja wspolnego to dziedziczenie po Aactor*/
+	w wypadku nullptr rzut zwroci nullptr takze zabezpiecza wskazniki :)*/
 	ASkyLight* Test = Cast<ASkyLight>(LightToChange);
 	ADirectionalLight* Test2 = Cast<ADirectionalLight>(LightToChange);
 	/* Jesli checkbox jest tickniety, zmien na noc
