@@ -43,7 +43,8 @@ private:
 	UPhysicsHandleComponent* podnosnik = nullptr;
 	// Defines how far should the character reach to pickup object
 	UPROPERTY(EditAnywhere, Category = "Pickup")
-		float grabDistance = 20.0f; // jakis sensowny  def value TODO znalezc sensowniejszy def value
+		float grabDistance = 400.0f; // jakis sensowny  def value TODO znalezc sensowniejszy def value
+	FVector GetLineEnd();
 
 public:	
 	// Called every frame

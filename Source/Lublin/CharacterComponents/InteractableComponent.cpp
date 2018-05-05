@@ -27,7 +27,7 @@ void UInteractableComponent::BeginPlay()
 }
 void UInteractableComponent::pickUp(FVector StartLocation)
 {
-
+	 // TODO REFACTOR IT!
 	// Setup collision parameters
 	FCollisionQueryParams TraceParams(FName(TEXT("")), false, GetOwner());
 	// Setup Hit
@@ -47,15 +47,32 @@ void UInteractableComponent::pickUp(FVector StartLocation)
 	Czerwony.G = 0;
 	//Draw a debug Line
 	DrawDebugLine(this->GetWorld(), StartLocation,EndLocation,Czerwony,true,0.0f,1,10);
-
-	// Trace object through type as we are intrested in physics objects
-	/*
-	if(GetWorld()->LineTraceSingleByObjectType(pickUpHit,
+	GetWorld()->LineTraceSingleByObjectType(
+		pickUpHit,
 		StartLocation,
+		EndLocation,
+		FCollisionObjectQueryParams(ECollisionChannel::ECC_PhysicsBody),
+		TraceParams
+	);
 
-	  ))
-	  */
-	// if object is hit than pick it up and add it to picked pointer
+	AActor* ActorHit = pickUpHit.GetActor();
+	if (ActorHit)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("%s is hit"), *(ActorHit->GetName()))
+	}
+	
+	auto DoPodniesienia = pickUpHit.GetComponent();
+	
+	if (!podnosnik) return;
+	podnosnik->GrabComponent(
+		DoPodniesienia,
+		NAME_None,
+		DoPodniesienia->GetOwner()->GetActorLocation()
+		, true
+	);
+
+
+
 	// else do nothing
 }
 void UInteractableComponent::setUpPhysicsComponent()
@@ -74,7 +91,23 @@ void  UInteractableComponent::release()
 void UInteractableComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-
+	// zabezpieczamy podnosnik
+	if (!podnosnik) return;
+	// sprawdzam czy cos jest podniesione
+	if (podnosnik->GrabbedComponent)
+	{
+		// wyliczyc miejsce do przeniesienia
+		// przeniesc tam
+		podnosnik->SetTargetLocation(GetLineEnd());
+	}
 	// ...
 }
+FVector UInteractableComponent::GetLineEnd()
+{
+	FVector TraceStartLocation;
+	FRotator TracingRotation;
+	FVector StartPosition = this->GetOwner()->GetActorLocation();
+	this->GetWorld()->GetFirstPlayerController()->GetPlayerViewPoint(TraceStartLocation, TracingRotation);
 
+	return StartPosition + TracingRotation.Vector() * grabDistance;
+}
