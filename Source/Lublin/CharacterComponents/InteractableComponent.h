@@ -43,10 +43,18 @@ private:
 	UPhysicsHandleComponent* podnosnik = nullptr;
 	// Defines how far should the character reach to pickup object
 	UPROPERTY(EditAnywhere, Category = "Pickup")
-		float grabDistance = 200.0f; // jakis sensowny  def value TODO znalezc sensowniejszy def value  atm, mamy moce telekinezy co jest CONAJMNIEJ SPOKO ale nie zbyt pasuje do gry :<
+		float grabDistance = 10.0f; //TODO find sensible value
 	FVector GetLineEnd();
 	UPROPERTY(EditAnywhere, Category = "Pickup")
-		float traceDistance = 10.0f;
+		float traceDistance = 200.0f;
+	FVector GetTheRotationVector();
+	/*
+	Setups Line Traceing parameters  and traces physics body returning  bool for wheter or not trace failed
+	@params
+	FVector StartLocation point from which we start the trace
+	FHitResult HitResult struct that is used to return the hit actor/component
+	*/
+	bool bLineTracePhysicsBody(FVector StartLocation, FHitResult & HitResult);
 
 public:	
 	// Called every frame
