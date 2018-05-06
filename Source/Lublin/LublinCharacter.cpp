@@ -9,10 +9,11 @@
 void ALublinCharacter::pickUp()
 {
 	// Chronmy wskazniki
-	if (!InteractablePhysicsComponent) return;
+
 	USkeletalMeshComponent* PlayerMesh = this->FindComponentByClass<USkeletalMeshComponent>();
 	if (!PlayerMesh) return;
 	FVector TracePosition = PlayerMesh->GetSocketLocation("headSocket");
+	if (!InteractablePhysicsComponent) return;
 	this->InteractablePhysicsComponent->pickUp(TracePosition);
 
 }

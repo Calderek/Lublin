@@ -38,7 +38,7 @@ void UInteractableComponent::pickUp(FVector StartLocation)
 	UE_LOG(LogTemp, Warning, TEXT("TracingRotation %s"), *(TracingRotation.Vector().ToString()));
 	UE_LOG(LogTemp, Warning, TEXT("TracingStart %s"), *(StartLocation.ToString()));
 
-	FVector EndLocation = StartLocation + TracingRotation.Vector() * grabDistance;
+	FVector EndLocation = StartLocation + TracingRotation.Vector() *  traceDistance;
 	UE_LOG(LogTemp, Warning, TEXT("EndLocation %s"), *(EndLocation.ToString()));
 	// Start location relative to player camera
 	FColor Czerwony;
@@ -78,9 +78,11 @@ void UInteractableComponent::pickUp(FVector StartLocation)
 void UInteractableComponent::setUpPhysicsComponent()
 {
 	podnosnik = GetOwner()->FindComponentByClass<UPhysicsHandleComponent>();
+	if (podnosnik) UE_LOG(LogTemp, Warning, TEXT("Znaleziono podnosnik"));
 }
 void  UInteractableComponent::release()
 {
+	if (!podnosnik) return;
 	// check if theres an item picked 
 	if (!pickedItem) return; // return from function protecting pointer
 	// else

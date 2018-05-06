@@ -43,8 +43,10 @@ private:
 	UPhysicsHandleComponent* podnosnik = nullptr;
 	// Defines how far should the character reach to pickup object
 	UPROPERTY(EditAnywhere, Category = "Pickup")
-		float grabDistance = 400.0f; // jakis sensowny  def value TODO znalezc sensowniejszy def value
+		float grabDistance = 200.0f; // jakis sensowny  def value TODO znalezc sensowniejszy def value  atm, mamy moce telekinezy co jest CONAJMNIEJ SPOKO ale nie zbyt pasuje do gry :<
 	FVector GetLineEnd();
+	UPROPERTY(EditAnywhere, Category = "Pickup")
+		float traceDistance = 10.0f;
 
 public:	
 	// Called every frame
