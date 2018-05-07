@@ -1,8 +1,29 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "Lublin.h"
+#include "CharacterComponents/InteractableComponent.h"
+#include "Runtime/Engine/Classes/Components/SkeletalMeshComponent.h"
 #include "LublinCharacter.h"
 
+
+void ALublinCharacter::pickUp()
+{
+	// Chronmy wskazniki
+
+	USkeletalMeshComponent* PlayerMesh = this->FindComponentByClass<USkeletalMeshComponent>();
+	if (!PlayerMesh) return;
+	FVector TracePosition = PlayerMesh->GetSocketLocation("headSocket");
+	if (!InteractablePhysicsComponent) return;
+	this->InteractablePhysicsComponent->pickUp(TracePosition);
+
+}
+
+void ALublinCharacter::releaseItem()
+{
+	// Tu tez je chronmy
+	if (!InteractablePhysicsComponent) return;
+	this->InteractablePhysicsComponent->release();
+}
 
 // Sets default values
 ALublinCharacter::ALublinCharacter()
@@ -20,6 +41,10 @@ ALublinCharacter::ALublinCharacter()
 	OurCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("GameCamera"));
 	OurCamera->SetupAttachment(OurCameraSpringArm, USpringArmComponent::SocketName);
 
+	InteractablePhysicsComponent = CreateDefaultSubobject<UInteractableComponent>(TEXT("Grab Component"));
+
+
+
 	AutoPossessPlayer = EAutoReceiveInput::Player0;
 }
 
@@ -28,6 +53,11 @@ void ALublinCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Yellow, TEXT("using LublinCharacter"));
+	this->InteractablePhysicsComponent = this->FindComponentByClass<UInteractableComponent>();
+	if (!InteractablePhysicsComponent) {
+		// Makes debugging easier
+		UE_LOG(LogTemp, Warning, TEXT("Komponent odpowiedzialny za fizyke nie zostal znaleziony"));
+	}
 
 }
 
@@ -35,7 +65,11 @@ void ALublinCharacter::BeginPlay()
 void ALublinCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+	
 
+
+
+	// this->LineTrace(); might be needed later tho
 	{
 		if (bZoomingIn)
 		{
@@ -54,7 +88,9 @@ void ALublinCharacter::Tick(float DeltaTime)
 	//Rotate our camera's pitch, but limit it so we're always looking downward
 	{
 		FRotator NewRotation = OurCameraSpringArm->GetComponentRotation();
-		NewRotation.Pitch = FMath::Clamp(NewRotation.Pitch + CameraInput.Y, -20.0f, 180.0f);
+		/* Oryginalnie Clamp z zakresu -20.f do 180.0f zmieniony by ulatwic interakcje z obiektami
+		*/
+		NewRotation.Pitch = FMath::Clamp(NewRotation.Pitch + CameraInput.Y,- 70.0f, 40.0f);
 		OurCameraSpringArm->SetWorldRotation(NewRotation);
 	}
 }
@@ -76,6 +112,8 @@ void ALublinCharacter::SetupPlayerInputComponent(class UInputComponent* InputCom
 	InputComponent->BindAction("Crouch", IE_Released, this, &ALublinCharacter::OnCrouchEnd);
 	InputComponent->BindAction("ZoomIn", IE_Pressed, this, &ALublinCharacter::ZoomIn);
 	InputComponent->BindAction("ZoomIn", IE_Released, this, &ALublinCharacter::ZoomOut);
+	InputComponent->BindAction("Grab", IE_Pressed, this, &ALublinCharacter::pickUp);
+	InputComponent->BindAction("Grab", IE_Released, this, &ALublinCharacter::releaseItem);
 }
 
 void ALublinCharacter::MoveForward(float AxisValue)
@@ -141,3 +179,26 @@ void ALublinCharacter::StopJump()
 	JumpButtonDown = false;
 
 }
+// TODO zadecydowac co z line traceiniem. Moze sie przydac do callowania co klatke w przypadku robienia User Interface (np najazd celownikiem wyswietla nazwe przedmiotu)
+/*
+void ALublinCharacter::LineTrace()
+{
+	// Zawiera dane o hitach z traceingu
+	FHitResult hit;
+	// Punkt poczatkowy ray traceingu
+	FVector startVector = this->OurCamera->GetComponentLocation();
+	// Koniec tracingu
+	FVector endVector = startVector + (this->OurCamera->GetForwardVector() * 300.0f);
+	GetWorld()->LineTraceSingleByChannel(hit, startVector, endVector, ECC_Camera);
+	// Struct przechowujacy obiekty ktorych traceowaniem jestem zainteresowany
+
+	if (hit.bBlockingHit)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("HIT"));
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("NOT HIT"));
+	}
+}
+*/
